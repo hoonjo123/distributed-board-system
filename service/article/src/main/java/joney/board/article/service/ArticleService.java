@@ -1,0 +1,71 @@
+package joney.board.article.service;
+
+import jakarta.transaction.Transactional;
+import joney.board.article.entity.Article;
+import joney.board.article.repository.ArticleRepository;
+import joney.board.article.service.request.ArticleCreateRequest;
+import joney.board.article.service.request.ArticleUpdateRequest;
+import joney.board.article.service.response.ArticlePageResponse;
+import joney.board.article.service.response.ArticleResponse;
+import joney.board.common.snowflake.Snowflake;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ArticleService {
+    private final Snowflake snowflake = new Snowflake();
+    private final ArticleRepository articleRepository;
+
+
+    @Transactional
+    public ArticleResponse create(ArticleCreateRequest request){
+        Article article = articleRepository.save(
+                Article.create(
+                        snowflake.nextId(),
+                        request.getTitle(),
+                        request.getContent(),
+                        request.getWriterId(),
+                        request.getBoardId())
+                );
+                return ArticleResponse.from(article);
+    }
+
+    @Transactional
+    public ArticleResponse update(Long articleId, ArticleUpdateRequest request){
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다. articleId = " + articleId));
+        article.update(request.getTitle(), request.getContent());
+        return ArticleResponse.from(article);
+    }
+
+    public ArticleResponse read(Long articleId){
+        return ArticleResponse.from(articleRepository.findById(articleId).orElseThrow());
+    }
+
+    @Transactional
+    public void delete(Long articleId){
+        articleRepository.deleteById(articleId);
+    }
+
+    public ArticlePageResponse readAll(Long boardId, Long page, Long pageSize) {
+        return ArticlePageResponse.of(
+                articleRepository.findAll(boardId, (page - 1) * pageSize, pageSize).stream()
+                        .map(ArticleResponse::from)
+                        .toList(),
+                articleRepository.count(
+                        boardId,
+                        PageLimitCalculator.calculatePageLimit(page, pageSize, 10L)
+                )
+        );
+    }
+
+    public List<ArticleResponse> readAllInfiniteScroll(Long boardId, Long pageSize, Long lastArticleId) {
+        List<Article> articles = lastArticleId == null ?
+                articleRepository.findAllInfiniteScroll(boardId, pageSize) :
+                articleRepository.findAllInfiniteScroll(boardId, pageSize, lastArticleId);
+        return articles.stream().map(ArticleResponse::from).toList();
+    }
+}
