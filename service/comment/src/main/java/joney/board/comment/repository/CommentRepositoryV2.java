@@ -82,4 +82,6 @@ public interface CommentRepositoryV2 extends JpaRepository<CommentV2, Long> {
             @Param("lastPath") String lastPath,
             @Param("limit") Long limit
     );
+
+
 }
