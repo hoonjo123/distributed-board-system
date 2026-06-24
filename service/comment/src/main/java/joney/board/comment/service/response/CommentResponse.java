@@ -1,6 +1,7 @@
 package joney.board.comment.service.response;
 
 import joney.board.comment.entity.Comment;
+import joney.board.comment.entity.CommentV2;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -15,6 +16,7 @@ public class CommentResponse {
     private Long articleId;
     private Long writerId;
     private Boolean deleted;
+    private String path;
     private LocalDateTime createdAt;
 
     public static CommentResponse from(Comment comment){
@@ -27,5 +29,17 @@ public class CommentResponse {
         commentResponse.deleted = comment.getDeleted();
         commentResponse.createdAt = comment.getCreatedAt();
         return commentResponse;
+    }
+
+    public static CommentResponse from(CommentV2 comment) {
+        CommentResponse response = new CommentResponse();
+        response.commentId = comment.getCommentId();
+        response.content = comment.getContent();
+        response.path = comment.getCommentPath().getPath();
+        response.articleId = comment.getArticleId();
+        response.writerId = comment.getWriterId();
+        response.deleted = comment.getDeleted();
+        response.createdAt = comment.getCreatedAt();
+        return response;
     }
 }
