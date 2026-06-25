@@ -78,3 +78,11 @@ Record Lock으로 인해 게시글 테이블에 좋아요 수 컬럼을 비정
 • 좋아요 서비스가 있는데, 게시글 서비스에서 관리할 이유가 없다.
 ```
 따라서, 좋아요 서비스의 데이터베이스에 좋아요 수 테이블을 관리한다.
+
+```aiignore
+create table article_like_count (
+article_id bigint not null primary key,
+like_count bigint not null,
+version bigint not null
+);
+```
