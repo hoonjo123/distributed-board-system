@@ -33,5 +33,6 @@ public class ViewApiTest {
 
         System.out.println("count = " + count);
         // 인메모리 db 사용으로 만건의 결과 대략 똥컴스펙으로 3초, mysql에 백업도 잘 됨 ( 100개 단위로 )
+        // 어뷰징 방지 로직 적용 후 -> 1개만 집계되는걸 확인
     }
 }
