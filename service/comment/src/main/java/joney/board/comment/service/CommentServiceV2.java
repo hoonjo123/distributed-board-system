@@ -41,6 +41,13 @@ public class CommentServiceV2 {
                         )
                 )
         );
+
+        int result = articleCommentCountRepository.increase(request.getArticleId());
+        if (result == 0){
+            articleCommentCountRepository.save(
+                    ArticleCommentCount.init(request.getArticleId(), 1L)
+            );
+        }
         return CommentResponse.from(comment);
     }
 
@@ -83,6 +90,7 @@ public class CommentServiceV2 {
 
     private void delete(CommentV2 comment) {
         commentRepository.delete(comment);
+        articleCommentCountRepository.decrease(comment.getArticleId());
         if (!comment.isRoot()) {
             commentRepository.findByPath(comment.getCommentPath().getParentPath())
                     .filter(CommentV2::getDeleted)
