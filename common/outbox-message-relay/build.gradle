@@ -1,0 +1,17 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    //애플리케이션마다 샤드를 균등하게 할당해서 아직 전송되지 않은 이벤트들을 재처리 하기위해 coordinate를 만들어야 한다. 이를 위해 redis를 사용한다.
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //카프카 전송을 위한 라이브러리
+    implementation 'org.springframework.kafka:spring-kafka'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    //outbox id 생성을 위한 snowflake
+    implementation project(':common:snowflake')
+    implementation project(':common:event')
+
+    //event의 경우 카프카로 전송시 직렬화가 필요하다.
+    implementation project(':common:data-serializer')
+}

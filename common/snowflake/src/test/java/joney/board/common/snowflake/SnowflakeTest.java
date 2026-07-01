@@ -1,6 +1,6 @@
 package joney.board.common.snowflake;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
